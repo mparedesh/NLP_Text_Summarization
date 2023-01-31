@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+<body class='p-2'>
+<form action="/fileUpload">
+    <input type="file" id="myFile" name="filename">
+    <input type="submit">
+  </form>
+</body>
+</html>
+{% endblock content %}

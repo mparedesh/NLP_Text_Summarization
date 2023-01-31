@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+<head>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script>
+        function previewImage() {
+          var input = document.getElementById('image-input');
+          var preview = document.getElementById('image-preview');
+          var reader = new FileReader();
+          
+          reader.onload = function() {
+            preview.src = reader.result;
+          };
+          
+          if (input.files && input.files[0]) {
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+        function uploadImage() {
+            var input = document.getElementById('image-input');
+            var image = input.files[0];
+            
+            var formData = new FormData();
+            formData.append('image', image);
+            const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            fetch('/textFromImage', {
+              method: 'POST',
+              body: formData,
+              headers: {
+                "X-CSRFToken": csrftoken
+            }
+              
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+            });
+          }
+      </script>
+<style>
+    .left {
+        float: left;
+      }
+      .center {
+        margin: 0 auto;
+        width: 50%; /* or any other width */
+      }
+      .right {
+        float: right;
+      }
+</style>
+</head>
+<body class='p-2'>
+    <input type="file" id="image-input" accept="image/*" onchange="previewImage()">
+</br>
+    <button id='extract_text' onclick="uploadImage()">Extract Text</button>
+</br>
+
+<div class="container">
+    <div class="left">
+    <div class="container">
+        <img id='image-preview' style="max-width: 400px; max-height: 600px;">
+    </div>
+    </div>
+    <div class="center">Center</div>
+    <div class="right">Right</div>
+  </div>
+
+</html>
+{% endblock content %}
