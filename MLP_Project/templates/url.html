@@ -26,6 +26,16 @@
       }
     }
   </style>
+
+  <script>
+    function enableButton() {
+      document.getElementById("extractText").disabled = false;
+    }
+    var parsedText = document.getElementById("parsedText");
+    parsedText.innerHTML = "Here is the parsedText";
+    var summarizedText = document.getElementById("summarizedText");
+    summarizedText.innerHTML = "Here is the summarizedText";
+  </script>
 </head>
 
 <body class='p-2'>
@@ -34,16 +44,17 @@
 <div id="loading-symbol"></div>
 <form class="form-floating" method='post' action='/url'>
     {% csrf_token %}
-    <input class="form-control" id="InputValue" placeholder="website_name.com" name='urlName'>
+    <input class="form-control" id="InputValue" placeholder="website_name.com" name='urlName' oninput="enableButton()">
     <label for="InputValue">Enter Url</label>
 </br>
 
 <div class="container">
   <div class="row justify-content-center">
-    <div class="col-7">
-      <button type="submit" id='extractText' name='submit_button' value='Submit 1' class="btn btn-success" style="width:550px">Extract Text</button>
+    <div class="col-7" style="display: grid; place-items: center;">
+
+      <button id='extractText' name='submit_button' value='Submit 1' class="btn btn-success" style="width:550px" disabled>Extract Text</button>
     </div>
-    <div class="col-7">
+    <div class="col-7" style="display: grid; place-items: center;">
       <button type="button" id='summarizeText' value='Submit 2' class="btn btn-danger" style='visiblity:hidden;width:550px'>Summarize Text</button>
     </div>
   </div>
@@ -54,10 +65,10 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-4" style="width:550px;padding:30px">
-      <p class="form-control" id='parsedText' style='background:white;height: 200px;overflow-y: auto;' contentEditable>{{parsedText}}</p>
+      <textarea class="form-control" id='parsedText' placeholder="Extracted text will appear hear" style='background:white;height: 200px;overflow-y: auto;' contentEditable>{{parsedText}}</textarea>
     </div>
     <div class="col-4" style="width:550px;padding:30px">
-      <p class="form-control" id='summarizedText' style='background:white;height: 200px;overflow-y: auto;' contentEditable>{{summarizedText}}</p>
+      <textarea class="form-control" id='summarizedText' placeholder="Summarized text text will appear hear" style='background:white;height: 200px;overflow-y: auto;' contentEditable>{{summarizedText}}</textarea>
     </div>
   </div>
 </div>
@@ -92,7 +103,6 @@
       showLoading();
       const p_text = document.querySelector('#parsedText').textContent;
       const data = { 'p_text': p_text };
-
       fetch('/url', {
         method: 'POST',
         headers: {
@@ -101,7 +111,6 @@
         },
         body: JSON.stringify(data)
       })
-      
       .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
